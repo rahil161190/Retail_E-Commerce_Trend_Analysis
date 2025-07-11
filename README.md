@@ -1,3 +1,6 @@
+Tableau Link:-  https://public.tableau.com/views/TargetCasestudy/AVGSUMFrieghtvalueStatewise2?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
+
+
 Target Case Study - Analyzing Operations in Brazil
 🔍 Overview
 Target, a globally recognized retailer, has built its reputation on innovation, value, and customer experience. This study examines Target’s operations in Brazil, based on 100,000 orders placed between 2016 and 2018, offering insights into customer behavior, payment trends, and logistics performance.
