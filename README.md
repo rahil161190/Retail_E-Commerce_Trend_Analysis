@@ -1,5 +1,5 @@
 Tableau Link:-  https://public.tableau.com/views/TargetCasestudy/Trendofordersdaytime?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
-
+Dataset download link :- https://drive.google.com/drive/folders/1TGEc66YKbD443nslRi1bWgVd238gJCnb
 Retail Case Study - Analyzing Operations in Brazil
 🔍 Overview
 The retail company, a globally recognized brand known for its innovation, value, and customer-centric approach, launched a deep-dive analysis into its Brazilian operations. This study, based on 100,000 orders placed between 2016 and 2018, offers insights into customer behavior, payment trends, and logistics performance.
