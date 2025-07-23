@@ -1,5 +1,4 @@
-Tableau Link:-  https://public.tableau.com/views/TargetCasestudy/AVGSUMFrieghtvalueStatewise2?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
-
+Tableau Link:-  https://public.tableau.com/views/TargetCasestudy/Trendofordersdaytime?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
 
 Retail Case Study - Analyzing Operations in Brazil
 🔍 Overview
