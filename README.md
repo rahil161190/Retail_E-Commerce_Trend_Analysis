@@ -1,12 +1,12 @@
 Tableau Link:-  https://public.tableau.com/views/TargetCasestudy/AVGSUMFrieghtvalueStatewise2?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
 
 
-Target Case Study - Analyzing Operations in Brazil
+Retail Case Study - Analyzing Operations in Brazil
 🔍 Overview
-Target, a globally recognized retailer, has built its reputation on innovation, value, and customer experience. This study examines Target’s operations in Brazil, based on 100,000 orders placed between 2016 and 2018, offering insights into customer behavior, payment trends, and logistics performance.
+The retail company, a globally recognized brand known for its innovation, value, and customer-centric approach, launched a deep-dive analysis into its Brazilian operations. This study, based on 100,000 orders placed between 2016 and 2018, offers insights into customer behavior, payment trends, and logistics performance.
 
 🚀 Business Problem
-Target aims to optimize its Brazilian market operations by addressing key questions:
+The retail company aims to optimize its Brazilian market operations by addressing key questions:
 
 Which states contribute the most to revenue growth?
 
@@ -16,31 +16,31 @@ What factors impact delivery time and overall customer satisfaction?
 
 📊 Key Business Insights
 1️⃣ Regional Sales Performance
-São Paulo (SP) leads in order volume and customer engagement, showing a promising business outlook.
+São Paulo (SP) leads in order volume and customer engagement, revealing strong growth potential.
 
-Growth trajectory indicates a strong revenue increase in 2019, following upward order trends.
+The trend line points to significant revenue acceleration in 2019.
 
-Target’s customer base is concentrated in SP, with limited penetration across other Brazilian states.
+Customer concentration remains high in SP, while other Brazilian states show lower market penetration.
 
 2️⃣ Payment & Order Value Trends
-Payment methods lack diversification, which could limit accessibility for customers preferring alternative transactions.
+Payment options lack diversity, possibly hindering accessibility for customers who prefer alternative transactions.
 
-Average order value can be increased by promoting secondary product bundles, enhancing revenue per transaction.
+Bundling secondary products presents a clear opportunity to raise the average transaction value.
 
 3️⃣ Logistics & Delivery Performance
-Delivery times need optimization, as logistics inefficiencies may hinder customer satisfaction.
+Delivery timelines require improvement; logistics inefficiencies may be reducing customer satisfaction.
 
-Shipping delays impact overall customer experience, requiring better freight management strategies.
+Shipping delays directly affect the overall customer experience, indicating a need for better freight coordination.
 
 📈 Strategic Recommendations
 1️⃣ Expand Market Reach Beyond SP
-✅ Launch targeted ad campaigns in underperforming states, broadening customer acquisition efforts.
+✅ Launch targeted marketing campaigns in underperforming states to widen customer acquisition.
 
 2️⃣ Optimize Payment Options for Greater Accessibility
-✅ Diversify payment methods, ensuring customers have multiple convenient choices at checkout.
+✅ Add more diverse payment methods to ensure flexible checkout experiences.
 
-3️⃣ Boost Revenue through Product Bundling
-✅ Introduce discounts on secondary products, encouraging customers to increase their average purchase value.
+3️⃣ Boost Revenue Through Product Bundling
+✅ Promote discounts on secondary product combinations to raise the average order value.
 
 4️⃣ Strengthen Logistics & Reduce Delivery Time
-✅ Invest in supply chain efficiency, optimizing fulfillment centers for faster deliveries. ✅ Improve tracking mechanisms, ensuring customers receive timely updates on their orders.
+✅ Invest in supply chain upgrades for faster fulfillment. ✅ Improve tracking systems to provide customers with timely delivery updates.
