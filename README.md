@@ -1,6 +1,6 @@
-Tableau Link:-  https://public.tableau.com/views/TargetCasestudy/Trendofordersdaytime?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link
+Tableau Link:-  [https://public.tableau.com/views/TargetCasestudy/AVGSUMFrieghtvalueStatewise?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link]
 
-Dataset download link :- https://drive.google.com/drive/folders/1TGEc66YKbD443nslRi1bWgVd238gJCnb
+Dataset download link :- [https://drive.google.com/drive/folders/1TGEc66YKbD443nslRi1bWgVd238gJCnb]
 
 Retail Case Study - Analyzing Operations in Brazil
 🔍 Overview
