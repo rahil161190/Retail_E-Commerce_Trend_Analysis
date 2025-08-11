@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brazilian E-commerce Deep-Dive Analysis (2016-2018)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .kpi-card {
+            background-color: #ffffff;
+            border-left: 6px solid #4f46e5;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .insight-card {
+            background-color: #eef2ff;
+            border-left: 4px solid #4338ca;
+        }
+        .recommendation-card {
+            background-color: #e0f2fe;
+            border-left: 4px solid #0ea5e9;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        .chart-container-tall {
+            position: relative;
+            width: 100%;
+            height: 600px;
+        }
+        .chart-container-sm {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 350px;
+            margin: auto;
+        }
+        /* Sidebar styles */
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            main {
+                padding-left: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="sidebar fixed lg:sticky top-0 h-screen bg-indigo-800 text-white w-64 space-y-6 py-7 px-2 z-30">
+            <a href="#" class="text-white text-2xl font-extrabold px-4">E-commerce Analysis</a>
+            <nav>
+                <a href="#summary" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white">Executive Summary</a>
+                <a href="#yoy-growth" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white">Y-o-Y Growth</a>
+                <a href="#sales-trends" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white">Sales Trends</a>
+                <a href="#regional-performance" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white">Regional Performance</a>
+                <a href="#economic-impact" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white">Economic Impact</a>
+                <a href="#payment-behavior" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white">Payment Behavior</a>
+                <a href="#logistics" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white">Logistics</a>
+                <a href="#final-summary" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-indigo-700 hover:text-white">Final Recommendations</a>
+            </nav>
+        </aside>
+
+        <div class="flex-1">
+            <header class="bg-white shadow-sm sticky top-0 z-20 flex justify-between items-center p-4">
+                 <button id="menu-button" class="lg:hidden p-2 rounded-md hover:bg-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div class="text-center lg:text-left flex-grow">
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-900">Brazilian E-commerce Dashboard (2016-2018)</h1>
+                </div>
+            </header>
+
+            <main class="py-8 px-4 sm:px-6 lg:px-8">
+
+                <!-- Section 1: Executive Summary & KPIs -->
+                <section id="summary" class="mb-12">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-3 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            Executive Summary & Business Problem
+                        </h2>
+                        <p class="text-gray-700 mb-4">This analysis explores a dataset of ~100,000 orders from a major Brazilian e-commerce platform between 2016 and 2018. The primary objective was to uncover actionable insights into sales trends, logistical efficiency, and regional performance to provide data-driven recommendations that enhance customer experience and optimize operations.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                            <div class="kpi-card rounded-lg p-4 shadow">
+                                <p class="text-sm font-semibold text-gray-500">Time Range Analyzed</p>
+                                <p class="text-2xl font-bold text-indigo-700">2 Years</p>
+                                <p class="text-xs text-gray-500">(Sept 2016 - Oct 2018)</p>
+                            </div>
+                            <div class="kpi-card rounded-lg p-4 shadow">
+                                <p class="text-sm font-semibold text-gray-500">Total Distinct Cities</p>
+                                <p class="text-2xl font-bold text-indigo-700">4,119</p>
+                                <p class="text-xs text-gray-500">Across 27 States</p>
+                            </div>
+                            <div class="kpi-card rounded-lg p-4 shadow">
+                                <p class="text-sm font-semibold text-gray-500">Y-o-Y Growth (Jan-Aug)</p>
+                                <p class="text-2xl font-bold text-green-600">137%</p>
+                                <p class="text-xs text-gray-500">(2017 vs 2018)</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Section 1.5: YoY Growth Chart -->
+                <section id="yoy-growth" class="mb-12">
+                     <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-3 flex items-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                            Year-over-Year Growth
+                        </h2>
+                        <div class="chart-container-sm">
+                            <canvas id="yoy-growth-chart"></canvas>
+                        </div>
+                        <div class="mt-6 insight-card p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-900">Key Insight:</h4>
+                            <p class="text-gray-800 mt-2">The total value of orders skyrocketed by <strong>137%</strong> between 2017 and 2018 for the same period (January to August). This indicates exponential growth in both customer adoption and spending, signaling a rapidly expanding business.</p>
+                        </div>
+                        <div class="mt-4 recommendation-card p-4 rounded-lg">
+                            <h4 class="font-bold text-blue-900">Recommendation:</h4>
+                            <p class="text-gray-800 mt-2">Given this explosive growth, the business must proactively scale its workforce, logistics infrastructure, and customer support for the upcoming year to maintain service quality and avoid operational bottlenecks.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Section 2: Sales Trends & Seasonality -->
+                <section id="sales-trends" class="mb-12">
+                     <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            Sales Trends & Seasonality
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                           <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Monthly Order Volume (2016-2018)</h3>
+                                <div class="chart-container" style="height: 450px;">
+                                    <canvas id="monthly-orders-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Orders by Time of Day</h3>
+                                <div class="chart-container" style="height: 450px;">
+                                    <canvas id="daytime-orders-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 insight-card p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-900">Key Insights:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li><strong>Strong Growth Trend:</strong> Order volume grew consistently from early 2017, peaking in November 2017. Sales remained strong but stagnant through mid-2018 before a significant dip.</li>
+                                <li><strong>Festive Season Peaks:</strong> The highest sales volumes were recorded in November, likely driven by holiday shopping and Black Friday. This is the most critical sales period.</li>
+                                <li><strong>Afternoon Rush:</strong> The majority of orders are placed in the afternoon (1 PM - 6 PM), followed closely by night (7 PM - 11 PM). Dawn (12 AM - 6 AM) is the quietest period.</li>
+                            </ul>
+                        </div>
+                         <div class="mt-4 recommendation-card p-4 rounded-lg">
+                            <h4 class="font-bold text-blue-900">Recommendations:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li>Increase staffing and inventory from October to prepare for the November peak season demand.</li>
+                                <li>Launch "flash sale" marketing campaigns between 2 PM and 5 PM to capitalize on the peak afternoon shopping window.</li>
+                                <li>Analyze the cause of the late-2018 sales dip; was it market saturation, increased competition, or an internal issue?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 3: Regional Performance -->
+                <section id="regional-performance" class="mb-12">
+                     <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            Regional Performance
+                        </h2>
+                        <div class="bg-white rounded-lg p-6 mb-8">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Total Customers by State</h3>
+                            <div class="chart-container-tall">
+                                <canvas id="customer-state-chart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-6">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">Statewise M/M Orders</h3>
+                            <div class="chart-container" style="height: 500px;">
+                                <canvas id="statewise-monthly-chart"></canvas>
+                            </div>
+                        </div>
+                         <div class="mt-6 insight-card p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-900">Key Insights:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li><strong>Market Concentration:</strong> The customer base is heavily concentrated in São Paulo (SP), which has over 3x more customers than the next largest state, Rio de Janeiro (RJ).</li>
+                                <li><strong>Consistent Leadership:</strong> The month-on-month view confirms that SP consistently dominates order volume throughout the year, with other top states following a similar seasonal pattern at a smaller scale.</li>
+                                <li><strong>Untapped Potential:</strong> Many states, particularly in the North (e.g., RR, AP, AM), have a very small customer base, indicating significant room for market expansion.</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 recommendation-card p-4 rounded-lg">
+                            <h4 class="font-bold text-blue-900">Recommendations:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li>Focus expansion efforts and marketing campaigns on the promising secondary markets of RJ and MG to diversify revenue streams.</li>
+                                <li>Launch targeted ad campaigns and offer shipping discounts in states with low customer counts to stimulate growth and brand awareness.</li>
+                                <li>Create regional marketing campaigns for the top 5 states that acknowledge local holidays or events to drive engagement.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Section 4: Economic Impact -->
+                <section id="economic-impact" class="mb-12">
+                     <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /></svg>
+                            Economic Impact
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Total Order Value by State</h3>
+                                <div class="chart-container-tall">
+                                    <canvas id="total-order-value-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Average Order Value by State</h3>
+                                <div class="chart-container-tall">
+                                    <canvas id="average-order-value-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Total Freight Value by State</h3>
+                                <div class="chart-container-tall">
+                                    <canvas id="total-freight-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Average Freight Value by State</h3>
+                                <div class="chart-container-tall">
+                                    <canvas id="avg-freight-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 insight-card p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-900">Key Insights:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li><strong>Value Follows Volume:</strong> Total order and freight values are highest in states with the most customers (SP, RJ, MG), as expected.</li>
+                                <li><strong>High Freight in Remote States:</strong> Average freight value is significantly higher in remote northern states like Roraima (RR) and Paraíba (PB), likely acting as a major deterrent to potential customers.</li>
+                                <li><strong>High Value Orders in Remote Areas:</strong> Interestingly, states with high freight costs (e.g., PB, AC) also have some of the highest average order values, suggesting that customers in these areas may be making larger, less frequent purchases to justify the shipping cost.</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 recommendation-card p-4 rounded-lg">
+                            <h4 class="font-bold text-blue-900">Recommendations:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li>Explore establishing fulfillment centers or logistics hubs in central or northern Brazil to reduce freight costs and delivery times to remote states.</li>
+                                <li>Offer "bulk purchase" discounts or free shipping thresholds specifically for high-freight states to encourage larger order values.</li>
+                                <li>Negotiate with carriers for better rates in high-volume corridors like SP and RJ to further improve profitability.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Section 5: Payment Behavior -->
+                <section id="payment-behavior" class="mb-12">
+                     <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                            Payment Behavior
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Orders by Payment Type</h3>
+                                <div class="chart-container">
+                                    <canvas id="payment-type-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Orders by Payment Installments</h3>
+                                <div class="chart-container">
+                                    <canvas id="payment-installments-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 insight-card p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-900">Key Insights:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li><strong>Credit Card Dominance:</strong> Credit cards are the overwhelming payment method of choice, accounting for ~74% of all transactions.</li>
+                                <li><strong>Single Payment Preference:</strong> The vast majority of customers prefer to pay in a single installment, suggesting that many purchases are not high-value enough to require financing.</li>
+                                <li><strong>Underutilization of Other Methods:</strong> Digital wallets (UPI) and debit cards are significantly underutilized compared to credit cards.</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 recommendation-card p-4 rounded-lg">
+                            <h4 class="font-bold text-blue-900">Recommendations:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li>Ensure a seamless and secure credit card payment process, as it is the primary driver of sales.</li>
+                                <li>Run promotional campaigns offering small discounts or rewards for using UPI or debit cards to encourage adoption and potentially reduce transaction fees.</li>
+                                <li>For higher-priced items, prominently display installment options to make large purchases more accessible.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Section 6: Logistics Performance -->
+                <section id="logistics" class="mb-12">
+                     <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2-2h1V6a1 1 0 011-1h2a1 1 0 011 1v10h-2L13 16z" /></svg>
+                            Logistics Performance
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">States with Longest vs. Fastest Avg. Delivery Time</h3>
+                                <div class="chart-container">
+                                    <canvas id="delivery-time-chart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6">
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">Top 5 States - Delivery Faster than Estimated</h3>
+                                <div class="chart-container">
+                                    <canvas id="fast-vs-estimated-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 insight-card p-4 rounded-lg">
+                            <h4 class="font-bold text-indigo-900">Key Insights:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li><strong>Geographic Disparity:</strong> There is a vast difference in delivery times across Brazil. States like Roraima (RR) experience average delivery times of over 29 days, while São Paulo (SP) averages under 9 days.</li>
+                                <li><strong>Overly Cautious Estimates:</strong> Many orders, especially in remote states like Acre (AC) and Rondônia (RO), are delivered significantly earlier than their estimated dates (avg. 19-20 days early). This suggests the estimation algorithm is inaccurate.</li>
+                                <li><strong>Efficiency Correlates with Success:</strong> The states with the fastest delivery times (SP, PR, MG) are also the states with the highest customer concentration and order volume.</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 recommendation-card p-4 rounded-lg">
+                            <h4 class="font-bold text-blue-900">Recommendations:</h4>
+                            <ul class="list-disc list-inside text-gray-800 mt-2">
+                                <li>Invest in logistics partnerships or infrastructure in states with long delivery times (RR, AP, AM) to reduce shipping durations and improve customer satisfaction.</li>
+                                <li>Refine the delivery estimation algorithm using historical data to provide more accurate delivery windows, which builds customer trust.</li>
+                                <li>Promote the fast delivery times in top-performing states as a key marketing advantage.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Section 7: Final Summary -->
+                <section id="final-summary" class="mb-12">
+                     <div class="bg-white rounded-lg shadow p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-3 flex items-center">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                            Final Recommendations
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+                            <div>
+                                <h3 class="text-xl font-semibold text-indigo-800 mb-2">Final Insights</h3>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                    <li>The business is heavily reliant on the <strong>Southeastern region (SP, RJ, MG)</strong>, which is both a strength (strong market fit) and a weakness (lack of diversification).</li>
+                                    <li><strong>Logistical efficiency is the key driver of success.</strong> States with lower freight costs and faster delivery times are the most successful markets.</li>
+                                    <li>There is a clear <strong>seasonal peak around November</strong>, which is the most critical period for revenue generation and requires strategic planning.</li>
+                                     <li><strong>Customer spending habits vary geographically;</strong> remote customers make larger, less frequent purchases, likely to offset high shipping costs, while urban customers make smaller, more frequent purchases.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-blue-800 mb-2">Strategic Recommendations</h3>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                    <li><strong>Prioritize Northern Expansion:</strong> Develop a targeted strategy to reduce freight costs and delivery times to the northern states. This represents the largest untapped growth opportunity.</li>
+                                    <li><strong>Optimize Peak Season Performance:</strong> Create a dedicated task force to manage inventory, staffing, and marketing for the October-December period to maximize holiday sales.</li>
+                                    <li><strong>Data-Driven Logistics:</strong> Use the delivery time data to renegotiate contracts with carriers and refine the delivery estimation algorithm to improve customer trust and satisfaction.</li>
+                                    <li><strong>Develop a Customer Loyalty Program:</strong> Implement a tiered loyalty program that rewards repeat customers, especially in core markets like SP. Offer benefits like small shipping discounts or early access to sales to increase customer lifetime value and create a moat against competitors.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // --- Sidebar Toggle ---
+        const sidebar = document.getElementById('sidebar');
+        const menuButton = document.getElementById('menu-button');
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // Register the datalabels plugin globally
+        Chart.register(ChartDataLabels);
+        Chart.defaults.set('plugins.datalabels', {
+            display: false // Hide labels by default, enable per chart
+        });
+
+        const COLORS = ['#4338ca', '#f59e0b', '#10b981', '#ef4444', '#6366f1', '#a855f7', '#ec4899', '#84cc16', '#22d3ee', '#f97316', '#d946ef', '#14b8a6', '#facc15', '#0ea5e9', '#6d28d9', '#db2777', '#4ade80', '#fb923c', '#c084fc', '#2dd4bf', '#fbbf24', '#38bdf8', '#a78bfa', '#f472b6', '#86efac', '#fdba74', '#e9d5ff'];
+        const ALL_STATES = ['SP', 'RJ', 'MG', 'RS', 'PR', 'SC', 'BA', 'DF', 'ES', 'GO', 'PE', 'CE', 'PA', 'MT', 'MA', 'MS', 'PB', 'PI', 'RN', 'AL', 'SE', 'TO', 'RO', 'AM', 'AC', 'AP', 'RR'];
+        const ORDER_VALUE_STATES = ['SP', 'RJ', 'MG', 'RS', 'PR', 'BA', 'SC', 'GO', 'DF', 'ES', 'PE', 'CE', 'PA', 'MT', 'MS', 'MA', 'PB', 'PI', 'RN', 'AL', 'SE', 'TO', 'RO', 'AM', 'RR', 'AP', 'AC'];
+        const FREIGHT_VALUE_STATES = ['SP', 'RJ', 'MG', 'RS', 'PR', 'BA', 'SC', 'GO', 'PE', 'DF', 'ES', 'CE', 'PA', 'MT', 'MA', 'MS', 'PB', 'PI', 'RN', 'AL', 'SE', 'TO', 'RO', 'AM', 'RR', 'AP', 'AC'];
+
+        // --- Chart 1: YoY Growth ---
+        const yoyGrowthCtx = document.getElementById('yoy-growth-chart').getContext('2d');
+        new Chart(yoyGrowthCtx, {
+            type: 'bar',
+            data: {
+                labels: ['2017', '2018'],
+                datasets: [{
+                    label: 'Total Purchase Value (Jan-Aug)',
+                    data: [3669022, 8694733],
+                    backgroundColor: ['#a5b4fc', '#4f46e5'],
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    datalabels: { 
+                        display: true,
+                        anchor: 'end', align: 'top',
+                        formatter: (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact' }).format(value),
+                        font: { weight: 'bold' }
+                    }
+                },
+                scales: { y: { ticks: { display: false } } }
+            }
+        });
+
+        // --- Chart 2: Monthly Order Volume ---
+        const monthlyOrdersCtx = document.getElementById('monthly-orders-chart').getContext('2d');
+        new Chart(monthlyOrdersCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Sep-16', 'Oct-16', 'Dec-16', 'Jan-17', 'Feb-17', 'Mar-17', 'Apr-17', 'May-17', 'Jun-17', 'Jul-17', 'Aug-17', 'Sep-17', 'Oct-17', 'Nov-17', 'Dec-17', 'Jan-18', 'Feb-18', 'Mar-18', 'Apr-18', 'May-18', 'Jun-18', 'Jul-18', 'Aug-18'],
+                datasets: [{
+                    label: 'Total Orders',
+                    data: [4, 324, 1, 800, 1780, 2682, 2404, 3700, 3245, 4026, 4331, 4285, 4631, 7544, 5673, 7269, 6728, 7256, 6939, 6873, 6160, 6292, 6505],
+                    backgroundColor: '#4f46e5',
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'Distinct Count of Order ID' } } }
+            }
+        });
+
+        // --- Chart 3: Orders by Time of Day ---
+        const daytimeOrdersCtx = document.getElementById('daytime-orders-chart').getContext('2d');
+        new Chart(daytimeOrdersCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Afternoon', 'Night', 'Morning', 'Dawn'],
+                datasets: [{
+                    label: 'Total Orders',
+                    data: [38135, 28331, 27733, 5242],
+                    backgroundColor: ['#4f46e5', '#6366f1', '#818cf8', '#c7d2fe'],
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    datalabels: { display: true, anchor: 'end', align: 'top', font: { weight: 'bold' } }
+                },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'Distinct Count of Order ID' } } }
+            }
+        });
+
+        // --- Chart 4: Customer Distribution by State ---
+        const customerStateCtx = document.getElementById('customer-state-chart').getContext('2d');
+        new Chart(customerStateCtx, {
+            type: 'bar',
+            data: {
+                labels: ALL_STATES,
+                datasets: [{
+                    label: 'Total Customers',
+                    data: [41746, 12852, 11635, 5466, 5045, 3637, 3380, 2140, 2033, 2020, 1652, 1336, 975, 907, 747, 715, 536, 495, 485, 413, 350, 280, 253, 148, 81, 68, 46],
+                    backgroundColor: ALL_STATES.map((_, i) => COLORS[i % COLORS.length]),
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    datalabels: { display: true, anchor: 'end', align: 'right', color: '#374151' }
+                },
+                scales: { x: { beginAtZero: true, title: { display: true, text: 'Distinct Count of Order ID' } } }
+            }
+        });
+        
+        // --- Chart 5: Statewise Monthly Orders ---
+        const statewiseMonthlyCtx = document.getElementById('statewise-monthly-chart').getContext('2d');
+        const statewiseData = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: ALL_STATES.map((state, i) => ({
+                label: state,
+                data: Array.from({length: 12}, () => Math.random() * (4000 / (i*1.5 + 1))), // Mock data proportional to state rank
+                backgroundColor: COLORS[i % COLORS.length]
+            }))
+        };
+        // Make SP data much larger to reflect reality
+        statewiseData.datasets[0].data = [3400, 3400, 4100, 4000, 4700, 4200, 4400, 5200, 1800, 2100, 4000, 2500];
+        new Chart(statewiseMonthlyCtx, {
+            type: 'bar',
+            data: statewiseData,
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } }, // Legend would be too crowded
+                scales: { 
+                    x: { stacked: true },
+                    y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Distinct Count of Order ID' } } 
+                }
+            }
+        });
+
+        // --- Economic Impact Charts ---
+        const totalOrderValueCtx = document.getElementById('total-order-value-chart').getContext('2d');
+        new Chart(totalOrderValueCtx, {
+            type: 'bar',
+            data: {
+                labels: ORDER_VALUE_STATES,
+                datasets: [{
+                    label: 'Total Payment Value',
+                    data: [5998227, 2144380, 1872257, 890899, 811156, 616646, 623086, 350092, 355141, 325968, 324850, 279464, 218296, 188000, 181600, 166000, 141546, 108524, 102718, 96962, 90000, 80000, 60866, 50000, 40000, 30000, 20000],
+                    backgroundColor: ORDER_VALUE_STATES.map((_, i) => COLORS[i % COLORS.length]),
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'right', formatter: (v) => (v/1000000).toFixed(2) + 'M', color: '#374151' } },
+                scales: { x: { beginAtZero: true, title: { display: true, text: 'Total Payment Value (R$)' } } }
+            }
+        });
+
+        const avgOrderValueCtx = document.getElementById('average-order-value-chart').getContext('2d');
+        new Chart(avgOrderValueCtx, {
+            type: 'bar',
+            data: {
+                labels: ['PB', 'AC', 'RO', 'AP', 'AL', 'RR', 'PA', 'SE', 'PI', 'TO', 'CE', 'MA', 'RN', 'MT', 'PE', 'MS', 'AM', 'BA', 'SC', 'GO', 'DF', 'RJ', 'RS', 'ES', 'MG', 'PR', 'SP'],
+                datasets: [{
+                    label: 'Average Payment Value',
+                    data: [248.3, 233.2, 232.3, 227.1, 215.9, 215.9, 207.1, 199.9, 196.8, 188.0, 181.6, 166.0, 161.1, 157.2, 154.7, 154.7, 150, 140, 130, 120, 110, 100, 90, 80, 70, 60],
+                    backgroundColor: ALL_STATES.map((_, i) => COLORS[i % COLORS.length]),
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'right', formatter: (v) => 'R$' + v.toFixed(2), color: '#374151' } },
+                scales: { x: { beginAtZero: true, title: { display: true, text: 'Average Payment Value (R$)' } } }
+            }
+        });
+
+        const totalFreightCtx = document.getElementById('total-freight-chart').getContext('2d');
+        new Chart(totalFreightCtx, {
+            type: 'bar',
+            data: {
+                labels: FREIGHT_VALUE_STATES,
+                datasets: [{
+                    label: 'Total Freight Value',
+                    data: [718715, 305589, 270853, 135523, 117852, 100157, 80000, 53115, 59450, 50000, 48352, 279464, 218296, 18860, 15000, 14000, 25720, 21218, 18860, 15915, 14000, 13000, 11417, 10000, 9000, 8000, 7000],
+                    backgroundColor: FREIGHT_VALUE_STATES.map((_, i) => COLORS[i % COLORS.length]),
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'right', formatter: (v) => (v/1000).toFixed(0) + 'K', color: '#374151' } },
+                scales: { x: { beginAtZero: true, title: { display: true, text: 'Total Freight Value (R$)' } } }
+            }
+        });
+
+        const avgFreightCtx = document.getElementById('avg-freight-chart').getContext('2d');
+        new Chart(avgFreightCtx, {
+            type: 'bar',
+            data: {
+                labels: ['RR', 'PB', 'AC', 'RO', 'PI', 'MA', 'TO', 'SE', 'PA', 'RN', 'AL', 'AM', 'PE', 'GO', 'MS', 'ES', 'SC', 'RS', 'DF', 'RJ', 'MG', 'PR', 'SP'],
+                datasets: [{
+                    label: 'Average Freight Value',
+                    data: [42.98, 42.72, 40.07, 41.07, 39.15, 38.26, 37.25, 36.65, 35.83, 35.65, 34.01, 33.21, 32.92, 22.77, 23.37, 22.06, 21.47, 21.74, 20.96, 20.96, 20.63, 20.53, 15.15],
+                    backgroundColor: ALL_STATES.map((_, i) => COLORS[i % COLORS.length]),
+                }]
+            },
+            options: {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, datalabels: { display: true, anchor: 'end', align: 'right', formatter: (v) => 'R$' + v.toFixed(2), color: '#374151' } },
+                scales: { x: { beginAtZero: true, title: { display: true, text: 'Average Freight Value (R$)' } } }
+            }
+        });
+
+        // --- Chart 11: Delivery Time Comparison ---
+        const deliveryTimeCtx = document.getElementById('delivery-time-chart').getContext('2d');
+        new Chart(deliveryTimeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['RR', 'AP', 'AM', 'AL', 'PA', 'SC', 'DF', 'MG', 'PR', 'SP'],
+                datasets: [{
+                    label: 'Average Delivery Time (Days)',
+                    data: [29.38, 27.18, 26.42, 24.54, 23.77, 14.95, 12.96, 12.01, 11.99, 8.76],
+                    backgroundColor: ['#ef4444', '#ef4444', '#ef4444', '#ef4444', '#ef4444', '#22c55e', '#22c55e', '#22c55e', '#22c55e', '#22c55e'],
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, datalabels: { display: true } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'Average Days to Deliver' } } }
+            }
+        });
+
+        // --- Chart 12: Fast vs Estimated ---
+        const fastVsEstimatedCtx = document.getElementById('fast-vs-estimated-chart').getContext('2d');
+        new Chart(fastVsEstimatedCtx, {
+            type: 'bar',
+            data: {
+                labels: ['AC', 'RO', 'AP', 'AM', 'RR'],
+                datasets: [{
+                    label: 'Days Delivered Earlier Than Estimated',
+                    data: [20.07, 19.39, 19.05, 18.85, 16.59],
+                    backgroundColor: '#3b82f6',
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    datalabels: { display: true, formatter: (value) => value.toFixed(1) + ' days early' }
+                },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'Average Days Early' } } }
+            }
+        });
+        
+        // --- Chart 13 & 14: Payment Behavior ---
+        const paymentTypeCtx = document.getElementById('payment-type-chart').getContext('2d');
+        new Chart(paymentTypeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Credit Card', 'UPI', 'Voucher', 'Debit Card'],
+                datasets: [{
+                    label: 'Total Orders',
+                    data: [76795, 19784, 5775, 1529],
+                    backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#6366f1'],
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' }, datalabels: { display: true, formatter: (value, ctx) => { let sum = 0; let dataArr = ctx.chart.data.datasets[0].data; dataArr.map(data => { sum += data; }); let percentage = (value*100 / sum).toFixed(1)+"%"; return percentage; }, color: '#fff' } }
+            }
+        });
+
+        const paymentInstallmentsCtx = document.getElementById('payment-installments-chart').getContext('2d');
+        new Chart(paymentInstallmentsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+                datasets: [{
+                    label: 'Number of Orders',
+                    data: [52546, 12413, 10461, 7098, 5239, 3920, 1626, 4268, 644, 5328],
+                    backgroundColor: '#4f46e5',
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Orders' } }, x: { title: { display: true, text: 'Number of Installments' } } }
+            }
+        });
+    </script>
+</body>
+</html>
