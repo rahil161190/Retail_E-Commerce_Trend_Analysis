@@ -1,6 +1,6 @@
 Tableau Link:-  [https://public.tableau.com/views/TargetCasestudy/AVGSUMFrieghtvalueStatewise?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link]
 
-Dashboard Link:- [Live Dashboard](https://rahil161190.github.io/Target_SQL/index.html)
+[View Dashboard] (https://rahil161190.github.io/Retail_E-Commerce_Trend_Analysis/index.html)
 
 
 Dataset download link :- [https://drive.google.com/drive/folders/1TGEc66YKbD443nslRi1bWgVd238gJCnb]
